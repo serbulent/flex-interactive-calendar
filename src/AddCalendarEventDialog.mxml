@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Canvas xmlns="http://www.adobe.com/2006/mxml" xmlns:validate="qs.validators.*" xmlns:sjdControls="sjd.controls.*"
 	borderStyle="solid" cornerRadius="10" borderColor="#888888"
-	backgroundColor="#565656" backgroundAlpha="0.75" width="500" height="250"  
+	backgroundColor="#565656" backgroundAlpha="0.75" width="556" height="292"  
 	defaultButton="{okButton}" >
 	
 	<Script>

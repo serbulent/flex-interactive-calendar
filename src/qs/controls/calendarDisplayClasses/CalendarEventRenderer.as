@@ -23,27 +23,28 @@ OTHER DEALINGS IN THE SOFTWARE.
 */
 package qs.controls.calendarDisplayClasses
 {
+	import flash.events.Event;
+	import flash.events.FocusEvent;
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
+	import flash.ui.Keyboard;
+	import flash.utils.getQualifiedClassName;
+	
+	import mx.binding.utils.BindingUtils;
+	import mx.containers.HBox;
+	import mx.controls.Button;
 	import mx.controls.Label;
+	import mx.core.Application;
 	import mx.core.IDataRenderer;
 	import mx.core.UIComponent;
 	import mx.core.UITextField;
+	import mx.events.FlexEvent;
 	
 	import qs.calendar.CalendarEvent;
+	import qs.controls.CalendarDisplay;
 	import qs.utils.ColorUtils;
 	import qs.utils.DateUtils;
-	import flash.events.MouseEvent;
-	import mx.core.Application;
-	import flash.events.FocusEvent;
-	import mx.binding.utils.BindingUtils;
-	import flash.events.KeyboardEvent;
-	import flash.ui.Keyboard;
-	import flash.events.Event;
-	import mx.controls.Button;
-	import mx.events.FlexEvent;
 	import qs.utils.StringUtils;
-	import flash.utils.getQualifiedClassName;
-	import mx.containers.HBox;
-	import qs.controls.CalendarDisplay;
 
 	public class CalendarEventRenderer extends UIComponent implements IDataRenderer, ICalendarEventRenderer
 	{
@@ -267,10 +268,20 @@ package qs.controls.calendarDisplayClasses
 				}
 				else
 				{
-					graphics.drawRoundRectComplex(0,2,unscaledWidth, _eventSummary.measuredHeight,8,8,0,0);
-					graphics.endFill();
-					graphics.beginFill(_event.color);
-					graphics.drawRoundRectComplex(0,2+_eventSummary.measuredHeight,unscaledWidth, unscaledHeight-2 - (2+_eventSummary.measuredHeight),0,0,8,8);
+					// In some cases _eventSummary.measuredHeight calculates as "NaN or 0" because of transformation matrices a and d (X and Y axis) values are 0.
+					// Here is a work around for this issue
+					if(_eventSummary.measuredHeight){
+						graphics.drawRoundRectComplex(0,2,unscaledWidth, _eventSummary.measuredHeight,8,8,0,0);
+						graphics.endFill();
+						graphics.beginFill(_event.color);
+						graphics.drawRoundRectComplex(0,2+_eventSummary.measuredHeight,unscaledWidth, unscaledHeight-2 - (2+_eventSummary.measuredHeight),0,0,8,8);
+					}else{
+						var newValue:int = 5
+						graphics.drawRoundRectComplex(0,2,unscaledWidth, newValue,8,8,0,0);
+						graphics.endFill();
+						graphics.beginFill(_event.color);
+						graphics.drawRoundRectComplex(0,2+newValue,unscaledWidth, unscaledHeight-2 - (2+newValue),0,0,8,8);
+					}
 					graphics.endFill();
 					graphics.lineStyle(1,_grabColor,1,false,"normal","none");
 					graphics.moveTo(0,unscaledHeight-8 );
