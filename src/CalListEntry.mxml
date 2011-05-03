@@ -12,6 +12,11 @@
 			override public function set data(value:Object):void
 			{
 				// unfortunately, fills don't trigger re-renders correctly, so we need to kick it manually.
+				
+				/*
+					TODO: Since setstyle method has issues old custom Ellipse class deleted and spark's Ellipse class started to use 
+						   but I still dont know are there still rendering issues
+				*/
 				//mark.setStyle("fill",new SolidColor(value.contextColor));
 				mark.fill = new SolidColor(value.contextColor);
 				super.data = value;

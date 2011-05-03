@@ -1829,9 +1829,7 @@ package qs.controls
 				ds.addData(data,"event.data");
 				ds.addData(_dragOffset,"event.dragOffset");
 				ds.addData(event.range.clone(),"event.originalRange");				
-			//	var dragImageClass:Class = getStyle("eventDragSkin");
-				
-				
+
 				[Embed(source="assets/eventDragImage.svg")]
 				var dragImageClass:Class;
 				
