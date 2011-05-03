@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Canvas xmlns="http://www.adobe.com/2006/mxml" xmlns:validate="qs.validators.*" xmlns:sjdControls="sjd.controls.*"
+	borderStyle="solid" cornerRadius="10" borderColor="#888888"
+	backgroundColor="#565656" backgroundAlpha="0.75" width="500" height="250"  
+	defaultButton="{okButton}" >
+	
+	<Script>
+		<![CDATA[
+			import mx.events.ValidationResultEvent;
+			import qs.utils.StringUtils;
+			import mx.events.CalendarLayoutChangeEvent;
+			import mx.events.SliderEvent;
+			import qs.utils.DateUtils;
+			import mx.controls.Alert;
+			import mx.controls.RadioButtonGroup;
+			import mx.managers.PopUpManager;
+			
+			[Bindable]
+			public var color:uint;
+			[Bindable]
+			public var startDate:Date;
+			[Bindable]
+			public var endDate:Date;
+			[Bindable]
+			public var eventName:String;
+			[Bindable]
+			public var eventDesc:String;
+			
+			public var addTimeCallback:Function;
+			
+			public var addDayCallback:Function;			
+			
+			public function cancel():void
+			{
+				PopUpManager.removePopUp(this);				
+			}
+			public function add():void
+			{
+				doValid();
+				
+				if(okButton.enabled){
+				
+					if(DateUtils.toIcsDate(startDate) == DateUtils.toIcsDate(endDate)){
+						//Add Time
+						startDate.hours = int(timeUI.values[0]);
+						if(timeUI.values[0] - int(timeUI.values[0]) > 0){
+							startDate.minutes = 30;
+						}else{
+							startDate.minutes = 0;
+						}
+						
+						endDate.hours = int(timeUI.values[1]);
+						if(timeUI.values[1] - int(timeUI.values[1]) > 0){
+							endDate.minutes = 30;
+						}else{
+							endDate.minutes = 0;
+						}
+						addTimeCallback(startDate, endDate, eventName, eventDesc, color);
+						PopUpManager.removePopUp(this);
+					}else{
+						//Add Day
+						if(startDate.getTime() >= endDate.getTime()){
+							Alert.show("Start Date must be earlier than the End Date!");
+							return;
+						}
+						
+						addDayCallback(startDate, endDate, StringUtils.trim(eventName), eventDesc, color);
+						
+						PopUpManager.removePopUp(this);
+					}
+				}
+			}
+			
+			private function dateChangeHandle():void{
+				timeUI.values = [0, 23.5];
+				timeValuesUI.text = getTimeSliderDataTip(timeUI.values[0]) + " - " + getTimeSliderDataTip(timeUI.values[1]);
+				if(startDateUI.text == endDateUI.text){
+					timeUI.enabled = true;
+				}else{
+					timeUI.enabled = false;
+				}
+			}
+			
+			private function getTimeSliderDataTip(value:Number):String {
+				return (value - int(value) > 0) ? String(value).replace(".5", ":30") : value + ":00";
+			}
+			
+			public function refresh():void{
+				timeValuesUI.text = getTimeSliderDataTip(timeUI.values[0]) + ' - ' + getTimeSliderDataTip(timeUI.values[1])
+				var enable:Boolean = (startDateUI.text == endDateUI.text);
+				timeUI.enabled = enable
+				eventValidator.enabled=true;
+			}
+			
+			private function handleValid(eventObj:ValidationResultEvent):void {
+				if(okButton){
+	                if(eventObj.type == ValidationResultEvent.VALID){
+	                    // Enable Submit button.
+	                    okButton.enabled = true;
+	                }else{
+	                    okButton.enabled = false;
+	                }
+                }
+            }
+            
+            private function doValid():void{
+            	if(eventModel){
+            		eventValidator.validate();
+            	}
+            }
+            
+			
+		]]>
+	</Script>
+	
+	<Binding source="colorUI.selectedColor" destination="color" />
+	<Binding source="startDateUI.selectedDate" destination="startDate" />
+	<Binding source="endDateUI.selectedDate" destination="endDate" />
+	<Binding source="eventNameUI.text" destination="eventName" />
+	<Binding source="eventDescUI.text" destination="eventDesc" />
+	
+	
+	<Form left="10" y="10" right="10" bottom="20" >
+		<FormItem label="Start Date:" width="100%">
+			<DateField id="startDateUI" color="#000000" selectedDate="{startDate}" change="dateChangeHandle()" valueCommit="doValid();"/>
+		</FormItem>
+		<FormItem label="End Date:" width="100%">
+			<DateField id="endDateUI" color="#000000" selectedDate="{endDate}" change="dateChangeHandle()" valueCommit="doValid();" />
+		</FormItem>
+		<FormItem label="Time:" width="100%">
+			<HBox width="100%">
+				<Text id="timeValuesUI" width="70" text="" />
+				<HSlider width="100%" id="timeUI" change="refresh();" dataTipFormatFunction="getTimeSliderDataTip" liveDragging="true" minimum="0" maximum="23.5" showDataTip="true" snapInterval="0.5" thumbCount="2" values="[0, 23.5]"/>
+			</HBox>
+		</FormItem>
+		<FormItem label="Event Name:" width="100%">
+			<sjdControls:ClearTextInput id="eventNameUI" width="100%" defultText="Please input event name..." defultTextColor="#FF0000" color="#000000" text="{eventName}" valueCommit="doValid();"/>
+		</FormItem>
+		<FormItem label="Event Description:" width="100%">
+			<TextArea id="eventDescUI" width="100%" height="50" color="#000000" text="{eventDesc}"/>
+		</FormItem>
+		<FormItem label="Event Color:">
+			<ColorPicker id="colorUI" width="44" selectedColor="{color}"/>
+		</FormItem>
+	</Form>
+	<Button id="okButton" x="434" bottom="10" label="Add" color="#400040" click="add();"/>
+	<Button id="cancelButton" x="361" bottom="10" label="Cancel" color="#000000" click="cancel();" />
+	<Label x="10" y="0" id="formTitle" text="Add a new Days/Time Event" styleName="CreateCalendarDialogHeader"/>
+	
+	<Model id="eventModel">
+		<root>
+			<event>
+				<name>{eventNameUI.text}</name>
+				<date>
+					<startDate>{startDateUI.selectedDate.getTime()}</startDate>
+					<endDate>{endDateUI.selectedDate.getTime()}</endDate>
+				</date>
+			</event>
+		</root>
+	</Model>
+    
+	<validate:EventValidator id="eventValidator" enabled="false" allListeners="{[eventNameUI, startDateUI, endDateUI]}" source="{eventModel}" property="event" required="false" valid="handleValid(event)" invalid="handleValid(event)" />
+</Canvas>
