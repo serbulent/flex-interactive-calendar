@@ -140,7 +140,7 @@
 			<TextArea id="eventDescUI" width="100%" height="50" color="#000000" text="{eventDesc}"/>
 		</FormItem>
 		<FormItem label="Event Color:">
-			<ColorPicker id="colorUI" width="44" selectedColor="{color}"/>
+			<ColorPicker id="colorUI" width="44" selectedColor="#BB0000"/>  <!--selectedColor="{color}"/>-->
 		</FormItem>
 	</Form>
 	<Button id="okButton" x="434" bottom="10" label="Add" color="#400040" click="add();"/>

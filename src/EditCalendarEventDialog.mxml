@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Canvas xmlns="http://www.adobe.com/2006/mxml" xmlns:local="*" xmlns:qs.validators="qs.validators.*" xmlns:sjdControls="sjd.controls.*"
 	borderStyle="solid" cornerRadius="10" borderColor="#888888"
-	backgroundColor="#565656" backgroundAlpha="0.75" width="500" height="250"  
+	backgroundColor="#565656" backgroundAlpha="0.75" width="546" height="292"  
 	creationComplete="init();"
 	defaultButton="{okButton}" >
 	
@@ -212,7 +212,7 @@
 		</FormItem>
 			
 		<FormItem label="Event Color:">
-			<ColorPicker id="colorUI" width="44" selectedColor="{color}"/>
+			<ColorPicker id="colorUI" width="44" selectedColor="#BB0000"/>  <!--selectedColor="{color}"/>-->
 		</FormItem>
 	</Form>
 	<Button id="delButton" x="12" bottom="10" label="Delete" color="#400040" click="del();"/>
