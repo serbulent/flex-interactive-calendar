@@ -65,6 +65,17 @@
 						//Edit Time
 						event.allDay = false;
 						
+						// Since we should set allowThumbOverlap=true (see comments on component for details) 
+						//we should control start time of the events are before the end time.
+						if(timeUI.values[1] < timeUI.values[0]){
+							var tmp:int;
+							tmp = timeUI.values[0];
+							timeUI.values[0] = timeUI.values[1];
+							timeUI.values[1] = tmp;
+						}else if(timeUI.values[0] == timeUI.values[1]){
+							timeUI.values[1] = timeUI.values[1] + 0.25;
+						}
+						
 						event.start = startDateUI.selectedDate;
 						event.start.hours = int(timeUI.values[0]);
 						if(timeUI.values[0] - int(timeUI.values[0]) > 0){
@@ -139,10 +150,22 @@
 			}
 			
 			private function getTimeSliderDataTip(value:Number):String {
-				return (value - int(value) > 0) ? String(value).replace(".5", ":30") : value + ":00";
+				return (value - int(value) > 0) ? String(value).replace(".5", ":30").replace(".25", ":15").replace(".75", ":45") : value + ":00";
 			}
 			
 			public function refresh():void{
+				
+				// Since we should set allowThumbOverlap=true (see comments on component for details) 
+				//we should control start time of the events are before the end time.
+				if(timeUI.values[1] < timeUI.values[0]){
+					var tmp:int;
+					tmp = timeUI.values[0];
+					timeUI.values[0] = timeUI.values[1];
+					timeUI.values[1] = tmp;
+				}else if(timeUI.values[0] == timeUI.values[1]){
+					timeUI.values[1] = timeUI.values[1] + 0.25;
+				}
+				
 				timeValuesUI.text = getTimeSliderDataTip(timeUI.values[0]) + ' - ' + getTimeSliderDataTip(timeUI.values[1])
 				var enable:Boolean = (startDateUI.text == endDateUI.text);
 				timeUI.enabled = enable
@@ -201,7 +224,13 @@
 		<FormItem label="Time:" width="100%">
 			<HBox width="100%">
 				<Text id="timeValuesUI" width="70" text="" />
-				<HSlider width="100%" id="timeUI" change="refresh();" dataTipFormatFunction="getTimeSliderDataTip" liveDragging="true" minimum="0" maximum="23.5" showDataTip="true" snapInterval="0.5" thumbCount="2" values="[0, 23.5]"/>
+				<!-- Since slider does not allow a distance smaller that 0.5 we should set allowThumbOverlap to true-->
+				<HSlider width="100%" id="timeUI" change="refresh();" 
+						 dataTipFormatFunction="getTimeSliderDataTip" 
+						 liveDragging="true" minimum="0" maximum="23.5"
+						 showDataTip="true"  snapInterval="0.25" 
+						 thumbCount="2" values="[0, 23.5]" thumbOffset="0.25" 
+						 allowThumbOverlap="true"/>
 			</HBox>
 		</FormItem>
 		<FormItem label="Event Name:" width="100%">
