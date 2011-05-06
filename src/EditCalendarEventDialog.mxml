@@ -79,14 +79,16 @@
 						event.start = startDateUI.selectedDate;
 						event.start.hours = int(timeUI.values[0]);
 						if(timeUI.values[0] - int(timeUI.values[0]) > 0){
-							event.start.minutes = 30;
+							// we convert 0.25 to 15, 0.5 to 30, 0.75 to 45 to set minutes
+							event.start.minutes = int((timeUI.values[0] - int(timeUI.values[0])) * 60);
 						}else{
 							event.start.minutes = 0;
 						}
 						event.end = endDateUI.selectedDate;
 						event.end.hours = int(timeUI.values[1]);
 						if(timeUI.values[1] - int(timeUI.values[1]) > 0){
-							event.end.minutes = 30;
+							// we convert 0.25 to 15, 0.5 to 30, 0.75 to 45 to set minutes
+							event.end.minutes = int((timeUI.values[0] - int(timeUI.values[0])) * 60);
 						}else{
 							event.end.minutes = 0;
 						}

@@ -6,6 +6,8 @@
 	
 	<Script>
 		<![CDATA[
+			import flashx.textLayout.formats.Float;
+			
 			import mx.controls.Alert;
 			import mx.controls.RadioButtonGroup;
 			import mx.events.CalendarLayoutChangeEvent;
@@ -59,14 +61,16 @@
 						
 						startDate.hours = int(timeUI.values[0]);
 						if(timeUI.values[0] - int(timeUI.values[0]) > 0){
-							startDate.minutes = 30;
+							// we convert 0.25 to 15, 0.5 to 30, 0.75 to 45 to set minutes
+							startDate.minutes = int((timeUI.values[0] - int(timeUI.values[0])) * 60);
 						}else{
 							startDate.minutes = 0;
 						}
 						
 						endDate.hours = int(timeUI.values[1]);
 						if(timeUI.values[1] - int(timeUI.values[1]) > 0){
-							endDate.minutes = 30;
+							// we convert 0.25 to 15, 0.5 to 30, 0.75 to 45 to set minutes
+							endDate.minutes = int((timeUI.values[0] - int(timeUI.values[0])) * 60);
 						}else{
 							endDate.minutes = 0;
 						}
